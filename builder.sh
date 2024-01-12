@@ -27,7 +27,6 @@ usage() {
     echo "-b, --build            For specific your type build [ex: -b youtube]"
     echo "-r, --archi            Specific output for local apk builder"
     echo
-    echo "--skip-patch           Skip revanced patches"
     echo "--clean                Clean up cache build after building"
     echo
     echo "-a, --auto-download    Auto downloading APK [ex: -a youtube]"
@@ -59,7 +58,7 @@ log() {
 }
 
 abort() {
-    echo -e "FAIL: $*"
+    echo -e "FAIL: $*" | tee -a build.log
     exit 1
 }
 
@@ -98,29 +97,6 @@ promptyn () {
     done
 }
 
-parseConfig() {
-    idname=$(echo $1 | yq ".idname")
-    moduleName=$(echo $1 | yq ".moduleName")
-    packageName=$(echo $1 | yq ".packageName")
-    outputType=$(echo $1 | yq ".outputType")
-    integrations=$(echo $1 | yq ".integrations")
-    patchOptions=$(echo $1 | yq ".patchOptions")
-    patches=$(echo $1 | yq ".patches[]")
-    hasRipLib=$(echo $1 | yq ".hasRipLib")
-    exclusivePatches=$(echo $1 | yq ".exclusivePatches")
-    archiConfig=$(echo $1 | yq ".archi[]")
-    cliUser=$(echo $1 | yq ".cliRepo.user")
-    cliRepo=$(echo $1 | yq ".cliRepo.repo")
-    cliBranch=$(echo $1 | yq ".cliRepo.branch")
-    patchesUser=$(echo $1 | yq ".patchesRepo.user")
-    patchesRepo=$(echo $1 | yq ".patchesRepo.repo")
-    patchesBranch=$(echo $1 | yq ".patchesRepo.branch")
-    intergrationUser=$(echo $1 | yq ".intergrationRepo.user")
-    intergrationRepo=$(echo $1 | yq ".intergrationRepo.repo")
-    intergrationBranch=$(echo $1 | yq ".intergrationRepo.branch")   
-    mkdir -p "$tmpDir/$idname"
-}
-
 checkDepencies() {
     log "Checking depencies..."
     local deps
@@ -151,6 +127,29 @@ checkDepencies() {
     [[ ${deps} -ne 1 ]] && log "Depencies passed... OK" || { 
         log "Install the above and rerun this script";exit 1;
     }
+}
+
+parseConfig() {
+    idname=$(echo $1 | yq ".idname")
+    moduleName=$(echo $1 | yq ".moduleName")
+    packageName=$(echo $1 | yq ".packageName")
+    outputType=$(echo $1 | yq ".outputType")
+    integrations=$(echo $1 | yq ".integrations")
+    patchOptions=$(echo $1 | yq ".patchOptions")
+    patches=$(echo $1 | yq ".patches[]")
+    hasRipLib=$(echo $1 | yq ".hasRipLib")
+    exclusivePatches=$(echo $1 | yq ".exclusivePatches")
+    archiConfig=$(echo $1 | yq ".archi[]")
+    cliUser=$(echo $1 | yq ".cliRepo.user")
+    cliRepo=$(echo $1 | yq ".cliRepo.repo")
+    cliBranch=$(echo $1 | yq ".cliRepo.branch")
+    patchesUser=$(echo $1 | yq ".patchesRepo.user")
+    patchesRepo=$(echo $1 | yq ".patchesRepo.repo")
+    patchesBranch=$(echo $1 | yq ".patchesRepo.branch")
+    intergrationUser=$(echo $1 | yq ".intergrationRepo.user")
+    intergrationRepo=$(echo $1 | yq ".intergrationRepo.repo")
+    intergrationBranch=$(echo $1 | yq ".intergrationRepo.branch")   
+    mkdir -p "$tmpDir/$idname"
 }
 
 get_ver() {
@@ -386,14 +385,14 @@ build() {
     local archi=$1
     local typeBuild=$2
     downloadingPatch
-    [[ "$SKIP_PATCH" == "false" ]] && {
-        log "Start patching $PATCH_NAME APK"
-        patchApk "$archi" "$typeBuild"
-    }
+
+    log "Start patching ${PATCH_NAME}-$archi APK"
+    patchApk "$archi" "$typeBuild"
+        
     mkdir -p "$outputDir"
     if [[ -f "$tmpDir/$idname/${idname}.apk" ]]; then
         if [[ "$typeBuild" == "apk" ]]; then
-            mv -f "$tmpDir/$idname/${idname}.apk" "$tmpDir/$idname/NORoot-${idname}-${archi}_${outVersion}.apk"
+            cp -f "$tmpDir/$idname/${idname}.apk" "$tmpDir/$idname/NORoot-${idname}-${archi}_${outVersion}.apk"
             mv -f "$tmpDir/$idname/NORoot-${idname}-${archi}_${outVersion}.apk" "$outputDir/"
             [[ -f "$outputDir/NORoot-${idname}-${archi}_${outVersion}.apk" ]] && {
                 log "Saved to: $outputDir/NORoot-${idname}-${archi}_${outVersion}.apk"
@@ -406,10 +405,47 @@ build() {
             [[ -f "$outputDir/$nameZipp" ]] && {
                 log "Saved to: $outputDir/$nameZipp"
             } || abort "FIle not saved"
+        else
+            log "Move APK to Output Dir"
+            cp -f "$tmpDir/$idname/${idname}.apk" "$tmpDir/$idname/NORoot-${idname}-${archi}_${outVersion}.apk"
+            mv -f "$tmpDir/$idname/NORoot-${idname}-${archi}_${outVersion}.apk" "$outputDir/"
+            [[ -f "$outputDir/NORoot-${idname}-${archi}_${outVersion}.apk" ]] && {
+                log "Saved to: $outputDir/NORoot-${idname}-${archi}_${outVersion}.apk"
+            } || abort "FIle not saved"
+            log "Building Magisk module"
+            buildMagisk "${archi}"
+            log "Create module success"
+            mv -f "$tmpDir/$idname/$nameZipp" "$outputDir/"
+            [[ -f "$outputDir/$nameZipp" ]] && {
+                log "Saved to: $outputDir/$nameZipp"
+            } || abort "FIle not saved"
         fi
     else
-        abort "Patching $PATCH_NAME failed!"
+        abort "Patching ${PATCH_NAME}-$archi failed!"
     fi
+}
+
+init() {
+    log "Get APK Info..."
+    if [[ "$5" == "true" ]]; then
+        getApkInfo "$1"
+    else
+        getApkInfo "$apkDir/${1}-${2}.apk"
+    fi
+    log "====[ ABOUT ]===="
+    log "PACKAGE: $3"
+    log "VERSION: $outVersion"
+    log "BUILD TYPE: $4"
+    log "AARCH: $2"
+    log "OWNER: $patchesUser"
+    log "PATCHES: $patchesRepo"
+    log "================="
+    build "$2" "$4"
+    [[ -d "$tmpDir/magisk" ]] && rm -rf "$tmpDir/magisk" &> /dev/null
+    [[ "$CLEAN" == "true" ]] && {
+        log "Cleaning building cache...."
+        cleaner
+    }
 }
 
 has_argument() {
@@ -424,7 +460,6 @@ APK_BASE=""
 AUD_ARR=""
 B_ARR=""
 AARCH=""
-SKIP_PATCH="false"
 CLEAN="false"
 AUD="false"
 ARCH="false"
@@ -470,7 +505,6 @@ handle_options() {
             ;;
             -e | --example) example;;
             --apkmirror) APKMIRROR="true";;
-            --skip-patch) SKIP_PATCH="true";;
             --clean) CLEAN="true";;
             *)
                 echo "Invalid option: $1" >&2
@@ -523,74 +557,62 @@ handle_options "$@"
                         build_mode=("apk" "module")
                     fi
                     while IFS= read -r aarch; do
-                        for bmod in "${build_mode[@]}"; do
-                            if [[ "$bmod" == "apk" ]]; then
-                                if [[ "$patchesUser" == "revanced" ]]; then
-                                    patchesx=$(echo "$object" | jq -rc '.patches -= ["GmsCore support"] | .patches += ["GmsCore support"] | .patches[]')
-                                else
-                                    patchesx=$(echo "$object" | jq -rc '.patches -= ["MicroG support"] | .patches += ["MicroG support"] | .patches[]')
-                                fi
-                            else
-                                if [[ "$patchesUser" == "revanced" ]]; then
-                                    patchesx=$(echo "$object" | jq -rc '.patches -= ["GmsCore support"] | .patches[]')
-                                else
-                                    patchesx=$(echo "$object" | jq -rc '.patches -= ["MicroG support"] | .patches[]')
-                                fi
-                            fi
-                            [[ "$SKIP_PATCH" == "true" ]] && log "Skip patching APK is enable"
-                            if [[ "$APKMIRROR" == "false" ]]; then
+                        if [[ "$APKMIRROR" == "false" ]]; then
+                            [[ ! -f "$apkDir/${x}-${aarch}.apk" ]] && {
+                                log "Downloading ${x}-${aarch}.apk"
+                                apkcomboDownload "${x}-${aarch}" "$pkgN" "${aarch}" "$x"
+                            }
+                        else
+                            log "Getting APK version from server..."
+                            if [[ "$x" == "instagram" ]]; then
                                 [[ ! -f "$apkDir/${x}-${aarch}.apk" ]] && {
+                                    get_ver "$pkgN" "$grupN"
                                     log "Downloading ${x}-${aarch}.apk"
-                                    apkcomboDownload "${x}-${aarch}" "$pkgN" "${aarch}" "$x"
+                                    apkmirrorDownload "$apkDir/${x}-${aarch}" "$grupN" "$x/$grupN/$grupN" "$aarch" "nodpi"
+                                }
+                            elif [[ "$x" == "youtube-music" ]]; then
+                                [[ ! -f "$apkDir/${x}-${aarch}.apk" ]] && {
+                                    get_ver "$pkgN" "$x"
+                                    log "Downloading ${x}-${aarch}.apk"
+                                    apkmirrorDownload "$apkDir/${x}-${aarch}" "$x" "$grupN/$x/$x" "$aarch"
                                 }
                             else
-                                log "Getting APK version from server..."
-                                if [[ "$x" == "instagram" ]]; then
-                                    [[ ! -f "$apkDir/${x}-${aarch}.apk" ]] && {
-                                        get_ver "$pkgN" "$grupN"
-                                        log "Downloading ${x}-${aarch}.apk"
-                                        apkmirrorDownload "$apkDir/${x}-${aarch}" "$grupN" "$x/$grupN/$grupN" "$aarch" "nodpi"
-                                    }
-                                elif [[ "$x" == "youtube-music" ]]; then
-                                    [[ ! -f "$apkDir/${x}-${aarch}.apk" ]] && {
-                                        get_ver "$pkgN" "$x"
-                                        log "Downloading ${x}-${aarch}.apk"
-                                        apkmirrorDownload "$apkDir/${x}-${aarch}" "$x" "$grupN/$x/$x" "$aarch"
-                                    }
-                                else
-                                    [[ ! -f "$apkDir/${x}-${aarch}.apk" ]] && {
-                                        get_ver "$pkgN" "$x"
-                                        log "Downloading ${x}-${aarch}.apk"
-                                        apkmirrorDownload "$apkDir/${x}-${aarch}" "$x" "$grupN/$x/$x"
-                                    }
-                                fi
+                                [[ ! -f "$apkDir/${x}-${aarch}.apk" ]] && {
+                                    get_ver "$pkgN" "$x"
+                                    log "Downloading ${x}-${aarch}.apk"
+                                    apkmirrorDownload "$apkDir/${x}-${aarch}" "$x" "$grupN/$x/$x"
+                                }
                             fi
-                            
-                            PATCH_NAME="$x"                 
-                            log "Get APK Info..."
-                            getApkInfo "$apkDir/${x}-${aarch}.apk"
-                            log "====[ ABOUT ]===="
-                            log "PACKAGE: $pkgN"
-                            log "VERSION: $outVersion"
-                            log "BUILD TYPE: $bmod"
-                            log "AARCH: $aarch"
-                            log "OWNER: $patchesUser"
-                            log "PATCHES: $patchesRepo"
-                            log "================="
-                            build "$aarch" "$bmod"
-                            [[ -d "$tmpDir/magisk" ]] && rm -rf "$tmpDir/magisk" &> /dev/null
-                            [[ "$CLEAN" == "true" ]] && {
-                                log "Cleaning building cache...."
-                                cleaner
-                            }
-                        done
+                        fi
+                        if [[ ! "$pkgN" == "com.google.android.youtube" ]] || [[ ! "$pkgN" == "com.google.android.apps.youtube.music" ]]; then
+                            patchesx=$(echo "$object" | jq -rc '.patches[]')
+                            PATCH_NAME="$x"
+                            init "$x" "$aarch" "$pkgN" "$outputType"
+                        else
+                            for bmod in "${build_mode[@]}"; do
+                                if [[ "$bmod" == "apk" ]]; then
+                                    if [[ "$patchesUser" == "revanced" ]]; then
+                                        patchesx=$(echo "$object" | jq -rc '.patches -= ["GmsCore support"] | .patches += ["GmsCore support"] | .patches[]')
+                                    else
+                                        patchesx=$(echo "$object" | jq -rc '.patches -= ["MicroG support"] | .patches += ["MicroG support"] | .patches[]')
+                                    fi
+                                else
+                                    if [[ "$patchesUser" == "revanced" ]]; then
+                                        patchesx=$(echo "$object" | jq -rc '.patches -= ["GmsCore support"] | .patches[]')
+                                    else
+                                        patchesx=$(echo "$object" | jq -rc '.patches -= ["MicroG support"] | .patches[]')
+                                    fi
+                                fi
+                                PATCH_NAME="$x"
+                                init "$x" "$aarch" "$pkgN" "$bmod"
+                            done
+                        fi
                     done <<< "$archiConfig"
                 done
             }
         done
     done
 }
-
 [[ "$FLOCAL" == "true" ]] && [[ ! "$BUILD" == "true" ]] && abort "If you using local apk you need passing argument (-b|--build) to specific your type build"
 [[ "$FLOCAL" == "true" ]] && [[ "$BUILD" == "true" ]] && {
     [[ "$APKMIRROR" == "true" ]] && abort "You cant use flag --apkmirror if using local APK"
@@ -618,23 +640,7 @@ handle_options "$@"
         fi
         for bmod in "${build_mode[@]}"; do
             PATCH_NAME="$B_ARR"
-            [[ "$SKIP_PATCH" == "true" ]] && log "Skip patching APK is enable"
-            log "Get APK Info..."
-            getApkInfo "$APK_BASE"
-            log "====[ ABOUT ]===="
-            log "PACKAGE: $pkgN"
-            log "VERSION: $outVersion"
-            log "BUILD TYPE: $bmod"
-            log "AARCH: $aarch"
-            log "OWNER: $patchesUser"
-            log "PATCHES: $patchesRepo"
-            log "================="
-            build "$AARCH" "$bmod"
-            [[ -d "$tmpDir/magisk" ]] && rm -rf "$tmpDir/magisk" &> /dev/null
-            [[ "$CLEAN" == "true" ]] && {
-                log "Cleaning building cache...."
-                cleaner
-            }
+            init "$APK_BASE" "$AARCH" "$pkgN" "$bmod" "true"
         done
     done
 }

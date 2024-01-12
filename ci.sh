@@ -34,8 +34,8 @@ check() {
 
 needUpdate() {
     curl -X POST "https://api.github.com/repos/${REPOSITORY}/dispatches" \
-        -H "Accept: application/vnd.github.everest-preview+json" \
         -H "Authorization: token ${TOKEN}" \
+        -H "Accept: application/vnd.github.everest-preview+json" \
         -d "{\"event_type\": \"${STATE}\"}"
 }
 
