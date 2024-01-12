@@ -1,0 +1,78 @@
+name: Build
+on:
+  workflow_call:
+  workflow_dispatch:
+  repository_dispatch:
+  
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - name: Setup Java 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: "zulu"
+          java-version: "17"
+
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Cloudflare Warp
+        run: bash .github/cf_warp.sh
+      
+      - name: Install AAPT
+        run: sudo apt-get install aapt -y
+
+      - name: Patch apk
+        shell: bash {0}
+        run: |
+          chmod +x builder.sh && ./builder.sh -a instagram -a youtube -a youtube-music -a twitter -a twitch -a reddit --clean --apkmirror
+          echo 
+       
+      - name: Upload Patch Info Release
+        uses: ncipollo/release-action@main
+        with:
+          tag: patch
+          artifacts: "output/*.json,build.log"
+          allowUpdates: true
+          removeArtifacts: false
+          replacesArtifacts: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Module Release
+        uses: ncipollo/release-action@main
+        with:
+          tag: Module
+          artifacts: output/*.zip
+          allowUpdates: true
+          removeArtifacts: false
+          replacesArtifacts: true
+          makeLatest: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: |
+            **Change log** :point_down:
+            [Revanced](https://github.com/revanced/revanced-patches/releases/latest)
+            [Revanced Extended](https://github.com/inotia00/revanced-patches/releases/latest)
+
+      - name: Upload APK Release
+        uses: ncipollo/release-action@main
+        with:
+          tag: APK
+          artifacts: output/*.apk
+          allowUpdates: true
+          removeArtifacts: false
+          replacesArtifacts: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: |
+            **Change log** :point_down:
+            [Revanced](https://github.com/revanced/revanced-patches/releases/latest)
+            [Revanced Extended](https://github.com/inotia00/revanced-patches/releases/latest)
+
+      - name: Delete workflow runs
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          retain_days: 0
+          keep_minimum_runs: 1

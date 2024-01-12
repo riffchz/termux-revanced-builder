@@ -1,0 +1,380 @@
+
+- idname: youtube-revanced-extended #dont give space on id
+  moduleName: YouTube ReVanced Extended
+  packageName: com.google.android.youtube
+  outputType: both # support type: both | apk | module
+  integrations: true
+  hasRipLib: true
+  exclusivePatches: true
+  archi: 
+    - arm64-v8a
+    - armeabi-v7a
+  cliRepo:
+    user: inotia00
+    repo: revanced-cli
+    branch: riplib
+  patchesRepo:
+    user: inotia00
+    repo: revanced-patches
+    branch: revanced-extended
+  intergrationRepo:
+    user: inotia00
+    repo: revanced-integrations
+    branch: revanced-extended
+  patchOptions: []
+  patches:
+    - Alternative thumbnails
+    - Ambient mode switch
+    - Change start page
+    - Custom double tap length
+    - Custom playback speed
+    - Custom player overlay opacity
+    - Custom seekbar color
+    - Default playback speed
+    - Default video quality
+    - Disable HDR video
+    - Disable QUIC protocol
+    - Disable auto captions
+    - Disable haptic feedback
+    - Disable pip notification
+    - Disable shorts on startup
+    - Disable speed overlay
+    - Enable bottom player gestures
+    - Enable compact controls overlay
+    - Enable external browser
+    - Enable gradient loading screen
+    - Enable language switch
+    - Enable minimized playback
+    - Enable new splash animation
+    - Enable new thumbnail preview
+    - Enable old quality layout
+    - Enable open links directly
+    - Enable seekbar tapping
+    - Enable tablet mini player
+    - Enable tablet navigation bar
+    - Enable wide search bar
+    - Force OPUS codec
+    - Force fullscreen
+    - Force video codec
+    - Hide account menu
+    - Hide button container
+    - Hide captions button
+    - Hide cast button
+    - Hide category bar
+    - Hide channel avatar section
+    - Hide channel profile components
+    - Hide channel watermark
+    - Hide collapse button
+    - Hide comment component
+    - Hide crowdfunding box
+    - Hide description components
+    - Hide end screen cards
+    - Hide end screen overlay
+    - Hide feed flyout panel
+    - Hide filmstrip overlay
+    - Hide floating microphone
+    - Hide fullscreen panels
+    - Hide general ads
+    - Hide handle
+    - Hide info cards
+    - Hide latest videos button
+    - Hide layout components
+    - Hide load more button
+    - Hide mix playlists
+    - Hide music button
+    - Hide navigation buttons
+    - Hide navigation label
+    - Hide player flyout panel
+    - Hide previous next button
+    - Hide search term thumbnail
+    - Hide seek message
+    - Hide seekbar
+    - Hide shorts components
+    - Hide snack bar
+    - Hide suggested actions
+    - Hide suggested video overlay
+    - Hide suggestions shelf
+    - Hide toolbar button
+    - Hide tooltip content
+    - Hide trending searches
+    - Hide video ads
+    - Layout switch
+    - Overlay buttons
+    - Quick actions components
+    - Remove viewer discretion dialog
+    - Return YouTube Dislike
+    - Sanitize sharing links
+    - Settings
+    - SponsorBlock
+    - Spoof app version
+    - Spoof device dimensions
+    - Spoof player parameters
+    - Swipe controls
+    - Translations
+    - Hide auto player popup panels
+    - Hide time stamp
+    - Premium heading
+    - Shorts outline button
+
+- idname: youtube-revanced #dont give space on id
+  moduleName: YouTube ReVanced
+  packageName: com.google.android.youtube
+  outputType: both # support type: both | apk | module
+  integrations: true
+  hasRipLib: true
+  exclusivePatches: true
+  archi: 
+    - arm64-v8a
+    - armeabi-v7a
+  cliRepo:
+    user: inotia00
+    repo: revanced-cli
+    branch: riplib
+  patchesRepo:
+    user: revanced
+    repo: revanced-patches
+    branch: main
+  intergrationRepo:
+    user: revanced
+    repo: revanced-integrations
+    branch: main
+  patchOptions: []
+  patches:
+    - Hide ads
+    - Minimized playback
+    - Video ads
+
+- idname: youtube-music-revanced #dont give space on id
+  moduleName: YouTube Music ReVanced
+  packageName: com.google.android.apps.youtube.music
+  outputType: both # support type: both | apk | module
+  integrations: true
+  hasRipLib: true
+  exclusivePatches: true
+  archi: 
+    - arm64-v8a
+    - armeabi-v7a
+  cliRepo:
+    user: inotia00
+    repo: revanced-cli
+    branch: riplib
+  patchesRepo:
+    user: revanced
+    repo: revanced-patches
+    branch: main
+  intergrationRepo:
+    user: revanced
+    repo: revanced-integrations
+    branch: main
+  patchOptions: []
+  patches:
+    - Minimized playback music
+    - Hide get premium
+    - Compact header
+    - Remove upgrade button
+    - Permanent shuffle
+    - Permanent repeat
+    - Background play
+    - Exclusive audio playback
+    - Codecs unlock
+    - Music video ads
+    - Bypass certificate checks
+
+- idname: youtube-music-revanced-extended #dont give space on id
+  moduleName: YouTube Music ReVanced
+  packageName: com.google.android.apps.youtube.music
+  outputType: both # support type: both | apk | module
+  integrations: true
+  hasRipLib: true
+  exclusivePatches: true
+  archi: 
+    - arm64-v8a
+    - armeabi-v7a
+  cliRepo:
+    user: inotia00
+    repo: revanced-cli
+    branch: riplib
+  patchesRepo:
+    user: inotia00
+    repo: revanced-patches
+    branch: revanced-extended
+  intergrationRepo:
+    user: inotia00
+    repo: revanced-integrations
+    branch: revanced-extended
+  patchOptions: []
+  patches:
+    - Amoled
+    - Background play
+    - Bitrate default value
+    - Certificate spoof
+    - Change start page
+    - Custom playback speed
+    - Disable auto captions
+    - Enable black navigation bar
+    - Enable color match player
+    - Enable compact dialog
+    - Enable custom filter
+    - Enable force minimized player
+    - Enable landscape mode
+    - Enable minimized playback
+    - Enable new player background
+    - Enable old style library shelf
+    - Enable old style miniplayer
+    - Enable opus codec
+    - Enable playback speed
+    - Enable sleep timer
+    - Enable zen mode
+    - Exclusive audio playback
+    - Hide account menu
+    - Hide action bar component
+    - Hide button shelf
+    - Hide carousel shelf
+    - Hide cast button
+    - Hide category bar
+    - Hide channel guidelines
+    - Hide emoji picker
+    - Hide flyout panel
+    - Hide general ads
+    - Hide get premium
+    - Hide handle
+    - Hide history button
+    - Hide navigation bar component
+    - Hide new playlist button
+    - Hide playlist card
+    - Hide taste builder
+    - Hide terms container
+    - Hide tooltip content
+    - Remember playback speed
+    - Remember repeat state
+    - Remember shuffle state
+    - Remember video quality
+    - Remove viewer discretion dialog
+    - Replace dismiss queue
+    - Return YouTube Dislike
+    - Sanitize sharing links
+    - Settings
+    - SponsorBlock
+    - Spoof app version
+    - Translations
+
+- idname: twitch-revanced #dont give space on id
+  moduleName: Twitch ReVanced
+  packageName: tv.twitch.android.app
+  outputType: both # support type: both | apk | module
+  integrations: true
+  hasRipLib: true
+  exclusivePatches: true
+  archi: 
+    - arm64-v8a
+    - armeabi-v7a
+  cliRepo:
+    user: inotia00
+    repo: revanced-cli
+    branch: riplib
+  patchesRepo:
+    user: revanced
+    repo: revanced-patches
+    branch: main
+  intergrationRepo:
+    user: revanced
+    repo: revanced-integrations
+    branch: main
+  patchOptions: []
+  patches:
+    - Block embedded ads
+    - Block video ads
+    - Block audio ads
+    - Settings
+    - Predictive back gesture
+    - Spoof Wi-Fi connection
+    - Spoof SIM country
+    - Remove screenshot restriction
+    - Remove screen capture restriction
+    - Export all activities
+    - Show deleted messages
+    - Auto claim channel points
+
+- idname: reddit-revanced #dont give space on id
+  moduleName: Reddit ReVanced
+  packageName: com.reddit.frontpage
+  outputType: both # support type: both | apk | module
+  integrations: true
+  hasRipLib: true
+  exclusivePatches: true
+  archi: 
+    - arm64-v8a
+    - armeabi-v7a
+  cliRepo:
+    user: inotia00
+    repo: revanced-cli
+    branch: riplib
+  patchesRepo:
+    user: revanced
+    repo: revanced-patches
+    branch: main
+  intergrationRepo:
+    user: revanced
+    repo: revanced-integrations
+    branch: main
+  patchOptions: []
+  patches:
+    - Unlock premium Reddit icons
+    - Disable screenshot popup
+    - Hide ads
+    - Sanitize sharing links
+
+- idname: twitter-revanced #dont give space on id
+  moduleName: Twitter ReVanced
+  packageName: com.twitter.android
+  outputType: both # support type: both | apk | module
+  integrations: true
+  hasRipLib: true
+  exclusivePatches: true
+  archi: 
+    - arm64-v8a
+    - armeabi-v7a
+  cliRepo:
+    user: inotia00
+    repo: revanced-cli
+    branch: riplib
+  patchesRepo:
+    user: revanced
+    repo: revanced-patches
+    branch: main
+  intergrationRepo:
+    user: revanced
+    repo: revanced-integrations
+    branch: main
+  patchOptions: []
+  patches:
+    - Hide recommended users
+    - Hide ads
+    - Dynamic color
+
+- idname: instagram-revanced #dont give space on id
+  moduleName: Instagram ReVanced
+  packageName: com.instagram.android
+  outputType: both # support type: both | apk | module
+  integrations: true
+  hasRipLib: true
+  exclusivePatches: true
+  archi: 
+    - arm64-v8a
+    - armeabi-v7a
+  cliRepo:
+    user: inotia00
+    repo: revanced-cli
+    branch: riplib
+  patchesRepo:
+    user: revanced
+    repo: revanced-patches
+    branch: main
+  intergrationRepo:
+    user: revanced
+    repo: revanced-integrations
+    branch: main
+  patchOptions: []
+  patches:
+    - Hide timeline ads
+

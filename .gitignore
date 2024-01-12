@@ -1,0 +1,7 @@
+resources/
+output/
+tmp/
+build.log
+k.sh
+patchesInfo.json
+testing/
