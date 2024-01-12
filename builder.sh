@@ -161,7 +161,7 @@ get_ver() {
                 jq -rc "[.patches[] | select(.compatiblePackages[0].name==\"$1\" and \
                          .compatiblePackages[0].versions != null)] | first | .compatiblePackages[0].versions | last")
         if [[ "$APKMIRROR" == "false" ]]; then
-            XVERSION="phone-$fetchVer-apk"
+            XVERSION="phone-$XVERSION-apk"
         fi
     else
  		local list_vers v versions=()
